@@ -1,0 +1,137 @@
+# Tokyo Twilight Shell Surfaces
+[bar]
+background       = "#0c0d14"
+background-alpha = 0.85
+text             = "#f5f6ff"
+active           = "#a855f7"
+scale-with-font  = true
+size-horizontal  = 28
+size-vertical    = 28
+
+[hyprland]
+active-border            = "#a855f7 #3b82f6 45deg"
+active-border-foreground = "#a855f7"
+
+[controls]
+normal-color              = "#f5f6ff"
+normal-fill-alpha         = 0.06
+normal-border             = "#f5f6ff"
+normal-border-width       = 0
+normal-border-alpha       = 0.0
+
+hover-cursor-color        = "#ffffff"
+hover-cursor-fill-alpha   = 0.12
+hover-cursor-border       = "#a855f7"
+hover-cursor-border-width = 0
+hover-cursor-border-alpha = 0.0
+
+focus-color               = "#ffffff"
+focus-fill-alpha          = 0.12
+focus-border              = "#a855f7"
+focus-border-width        = 0
+focus-border-alpha        = 0.0
+
+selected-color            = "#ffffff"
+selected-fill-alpha       = 0.22
+selected-border           = "#a855f7"
+selected-border-width     = 0
+selected-border-alpha     = 0.0
+
+pressed-fill-alpha        = 0.25
+selection-fill-alpha      = 0.35
+
+[spacing]
+scale           = 1.0
+scale-with-font = true
+
+[font]
+base-size = 12
+
+[popups]
+background       = "#0c0d14"
+background-alpha = 0.90
+text             = "#f5f6ff"
+border           = "#a855f7"
+border-alpha     = 0.0
+border-width     = 0
+
+[tooltip]
+background       = "#0c0d14"
+background-alpha = 0.95
+text             = "#f5f6ff"
+border           = "#a855f7"
+border-alpha     = 0.0
+
+[notifications]
+background       = "#0c0d14"
+background-alpha = 0.92
+text             = "#f5f6ff"
+border           = "#a855f7"
+border-alpha     = 0.0
+border-width     = 0
+countdown        = "#a855f7"
+
+[launcher]
+background                = "#0c0d14"
+background-alpha          = 0.88
+text                      = "#f5f6ff"
+border                    = "#a855f7"
+border-alpha              = 0.0
+border-width              = 0
+scrim                     = "#050609"
+scrim-alpha               = 0.50
+selected-background       = "#a855f7"
+selected-background-alpha = 0.22
+selected-text             = "#ffffff"
+selected-border           = "#a855f7"
+selected-border-alpha     = 0.0
+selected-border-width     = 0
+
+[menu]
+background                = "#0c0d14"
+background-alpha          = 0.88
+text                      = "#f5f6ff"
+border                    = "#a855f7"
+border-alpha              = 0.0
+border-width              = 0
+scrim                     = "#050609"
+scrim-alpha               = 0.50
+selected-background       = "#a855f7"
+selected-background-alpha = 0.22
+selected-text             = "#ffffff"
+selected-border           = "#a855f7"
+selected-border-alpha     = 0.0
+selected-border-width     = 0
+
+[polkit]
+background       = "#0c0d14"
+background-alpha = 0.92
+text             = "#f5f6ff"
+text-error       = "#f43f5e"
+border           = "#a855f7"
+border-error     = "#f43f5e"
+border-alpha     = 0.0
+border-width     = 0
+scrim            = "#050609"
+scrim-alpha      = 0.5
+accent           = "#a855f7"
+
+[lock]
+background       = "#0c0d14"
+background-alpha = 0.85
+text             = "#f5f6ff"
+placeholder      = "#65678a"
+text-error       = "#f43f5e"
+border           = "#a855f7"
+border-active    = "#a855f7"
+border-error     = "#f43f5e"
+border-alpha     = 0.3
+selection        = "#a855f7"
+selection-alpha  = 0.45
+
+[image-picker]
+text                    = "#f5f6ff"
+selected-border         = "#a855f7"
+selected-border-alpha   = 1.0
+unselected-border       = "#4c486e"
+unselected-border-alpha = 0.30
