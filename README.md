@@ -164,6 +164,36 @@ Tokyo Twilight works with both default and enhanced Omarchy bar setups. The show
 
 ---
 
+## Terminal Disk Manager (`dsk`)
+
+Tokyo Twilight includes the **`dsk`** utility for fast, interactive disk mounting and entering directly in your terminal without needing root passwords:
+
+- 💾 **Interactive Drive Selector**: Beautiful Charm `gum` selector showing device, size, filesystem, and mount status.
+- ⚡ **Auto-Mount & Direct `cd`**: Selecting an unmounted drive mounts it via `udisksctl` (no `sudo` needed) and immediately changes directory (`cd`) straight into it.
+- 📂 **Direct Jump & Safe Eject**: Jump into already mounted drives or safely unmount them with one keypress.
+
+### Installation
+On any new PC:
+
+```bash
+cd ~/.config/omarchy/themes/tokyo-twilight
+./install-dsk.sh
+```
+
+Or install with the one-liner:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Mojarras7/tokyo-twilight/main/install-dsk.sh | bash
+```
+
+### Usage
+- `dsk` *(or `disks`)* — Open interactive disk picker.
+- `dsk <label>` — Jump directly to a drive (e.g. `dsk Datos` or `dsk sda2`).
+- `dsk -l` — List connected drives and mount points in Tokyo Twilight colors.
+- `dsk -u <label>` — Unmount drive safely.
+
+---
+
 ## Author
 
 Created by **Alejandro Mojarras** ([@Mojarras7](https://github.com/Mojarras7)).

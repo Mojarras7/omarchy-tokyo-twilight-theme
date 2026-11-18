@@ -1,0 +1,270 @@
+#!/usr/bin/env python3
+import sys
+import os
+import json
+import shutil
+import subprocess
+import argparse
+
+# Colors
+C_PURPLE = "\033[38;2;168;85;247m"
+C_BLUE   = "\033[38;2;96;165;250m"
+C_PINK   = "\033[38;2;244;63;142m"
+C_WHITE  = "\033[38;2;245;246;255m"
+C_MUTED  = "\033[38;2;100;103;138m"
+C_GREEN  = "\033[38;2;52;211;153m"
+C_BOLD   = "\033[1m"
+C_RESET  = "\033[0m"
+
+SYSTEM_MOUNTS = {"/", "/boot", "/var/log", "[SWAP]", "/var/cache/pacman/pkg"}
+SYSTEM_FSTYPES = {"swap", "crypto_LUKS"}
+
+def get_disks():
+    try:
+        output = subprocess.check_output(
+            ["lsblk", "-J", "-o", "NAME,PATH,SIZE,FSTYPE,LABEL,MOUNTPOINTS,TYPE,RM"],
+            stderr=subprocess.DEVNULL
+        ).decode()
+        data = json.loads(output)
+    except Exception as e:
+        sys.stderr.write(f"Error querying disks: {e}\n")
+        return []
+
+    disks = []
+    def scan(node):
+        fstype = node.get("fstype")
+        mountpoints = node.get("mountpoints") or []
+        node_type = node.get("type")
+        
+        # Partitions or whole disks that have filesystems
+        is_part = node_type in ("part", "crypt") or (node_type == "disk" and fstype and not node.get("children"))
+        
+        is_system = any(mp in SYSTEM_MOUNTS for mp in mountpoints)
+        
+        if is_part and fstype and fstype not in SYSTEM_FSTYPES and not is_system:
+            disks.append({
+                "name": node.get("name"),
+                "path": node.get("path"),
+                "size": node.get("size") or "Unknown",
+                "fstype": fstype,
+                "label": node.get("label") or "",
+                "mountpoint": mountpoints[0] if mountpoints else None,
+                "mounted": bool(mountpoints)
+            })
+            
+        for child in node.get("children", []):
+            scan(child)
+
+    for dev in data.get("blockdevices", []):
+        scan(dev)
+
+    return disks
+
+def print_disk_list(disks):
+    if not disks:
+        print(f"{C_MUTED}No non-system disks found.{C_RESET}")
+        return
+
+    print(f"\n{C_BOLD}{C_PURPLE}Tokyo Twilight{C_RESET} {C_BLUE}Disks & Partitions:{C_RESET}\n")
+    print(f"  {C_MUTED}{'DEVICE':<10} {'SIZE':<8} {'FSTYPE':<8} {'LABEL':<16} {'STATUS / MOUNTPOINT'}{C_RESET}")
+    print(f"  {C_MUTED}{'-'*65}{C_RESET}")
+    for d in disks:
+        status = f"{C_GREEN}● Mounted{C_RESET} -> {C_BLUE}{d['mountpoint']}{C_RESET}" if d['mounted'] else f"{C_PINK}○ Unmounted{C_RESET}"
+        label = d['label'] or "-"
+        print(f"  {C_WHITE}{d['name']:<10}{C_RESET} {d['size']:<8} {d['fstype']:<8} {label:<16} {status}")
+    print()
+
+def get_mountpoint(device_path):
+    try:
+        mp = subprocess.check_output(
+            ["findmnt", "-n", "-o", "TARGET", device_path],
+            stderr=subprocess.DEVNULL
+        ).decode().strip()
+        return mp if mp else None
+    except subprocess.CalledProcessError:
+        return None
+
+def mount_device(device_path):
+    try:
+        res = subprocess.run(
+            ["udisksctl", "mount", "-b", device_path],
+            capture_output=True,
+            text=True
+        )
+        if res.returncode == 0:
+            mp = get_mountpoint(device_path)
+            return mp, None
+        else:
+            # Already mounted check
+            mp = get_mountpoint(device_path)
+            if mp:
+                return mp, None
+            return None, res.stderr.strip()
+    except Exception as e:
+        return None, str(e)
+
+def unmount_device(device_path):
+    try:
+        res = subprocess.run(
+            ["udisksctl", "unmount", "-b", device_path],
+            capture_output=True,
+            text=True
+        )
+        if res.returncode == 0:
+            return True, None
+        return False, res.stderr.strip()
+    except Exception as e:
+        return False, str(e)
+
+def interactive_select(options, header="Select:"):
+    if shutil.which("gum"):
+        try:
+            cmd = [
+                "gum", "choose",
+                f"--header={header}",
+                "--cursor=❯ ",
+                "--cursor.foreground=#a855f7",
+                "--header.foreground=#60a5fa"
+            ] + options
+            res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
+            if res.returncode == 0 and res.stdout.strip():
+                return res.stdout.strip()
+        except Exception:
+            pass
+            
+    if shutil.which("fzf"):
+        try:
+            p = subprocess.Popen(
+                ["fzf", "--prompt=❯ ", "--header=" + header],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                text=True
+            )
+            out, _ = p.communicate(input="\n".join(options))
+            if p.returncode == 0 and out.strip():
+                return out.strip()
+        except Exception:
+            pass
+
+    # Simple terminal fallback
+    print(f"\n{C_BOLD}{C_BLUE}{header}{C_RESET}")
+    for idx, opt in enumerate(options, 1):
+        print(f"  {C_PURPLE}{idx}){C_RESET} {opt}")
+    try:
+        choice = input(f"\n{C_PURPLE}Enter number (or 'q' to quit): {C_RESET}").strip()
+        if choice.isdigit() and 1 <= int(choice) <= len(options):
+            return options[int(choice) - 1]
+    except (EOFError, KeyboardInterrupt):
+        pass
+    return None
+
+def main():
+    parser = argparse.ArgumentParser(description="Tokyo Twilight Disk Manager")
+    parser.add_argument("disk", nargs="?", help="Disk label or device name (e.g. Datos or sda2)")
+    parser.add_argument("-l", "--list", action="store_true", help="List all disks and exit")
+    parser.add_argument("-u", "--unmount", action="store_true", help="Unmount the specified or selected disk")
+    parser.add_argument("--target-file", help=argparse.SUPPRESS)
+    args = parser.parse_args()
+
+    disks = get_disks()
+
+    if args.list:
+        print_disk_list(disks)
+        return 0
+
+    if not disks:
+        print(f"{C_PINK}No non-system disks or removable drives detected.{C_RESET}")
+        return 1
+
+    selected_disk = None
+
+    if args.disk:
+        query = args.disk.lower()
+        for d in disks:
+            if query == d["name"].lower() or query == d["path"].lower() or query == d["label"].lower() or query in d["label"].lower():
+                selected_disk = d
+                break
+        if not selected_disk:
+            print(f"{C_PINK}Disk '{args.disk}' not found.{C_RESET}")
+            print_disk_list(disks)
+            return 1
+    else:
+        # Interactive selection
+        options = []
+        for d in disks:
+            status_symbol = "●" if d["mounted"] else "○"
+            label_part = f" - \"{d['label']}\"" if d['label'] else ""
+            status_text = f"Mounted at {d['mountpoint']}" if d['mounted'] else "Unmounted"
+            opt_str = f"[{status_symbol}] {d['name']} ({d['size']} {d['fstype']}{label_part}) [{status_text}]"
+            options.append(opt_str)
+
+        chosen_str = interactive_select(options, header="💾 Select a Disk / Drive:")
+        if not chosen_str:
+            return 0
+
+        # Match back to disk
+        for idx, opt in enumerate(options):
+            if opt == chosen_str:
+                selected_disk = disks[idx]
+                break
+
+    if not selected_disk:
+        return 0
+
+    # Unmount action
+    if args.unmount:
+        if not selected_disk["mounted"]:
+            print(f"{C_MUTED}{selected_disk['name']} is already unmounted.{C_RESET}")
+            return 0
+        success, err = unmount_device(selected_disk["path"])
+        if success:
+            print(f"{C_GREEN}✓ Successfully unmounted {selected_disk['name']}.{C_RESET}")
+            return 0
+        else:
+            print(f"{C_PINK}Failed to unmount {selected_disk['name']}: {err}{C_RESET}")
+            return 1
+
+    # If already mounted and interactive (no disk arg provided)
+    if selected_disk["mounted"] and not args.disk:
+        actions = [
+            f"📂 Enter disk directory ({selected_disk['mountpoint']})",
+            f"⏏️  Unmount disk ({selected_disk['name']})",
+            "❌ Cancel"
+        ]
+        action = interactive_select(actions, header=f"Disk {selected_disk['name']} ({selected_disk['label'] or 'Drive'}):")
+        if not action or "Cancel" in action:
+            return 0
+        if "Unmount" in action:
+            success, err = unmount_device(selected_disk["path"])
+            if success:
+                print(f"{C_GREEN}✓ Successfully unmounted {selected_disk['name']}.{C_RESET}")
+                return 0
+            else:
+                print(f"{C_PINK}Failed to unmount: {err}{C_RESET}")
+                return 1
+
+    # Mount if needed
+    mountpoint = selected_disk["mountpoint"]
+    if not mountpoint:
+        print(f"{C_MUTED}Mounting {selected_disk['name']}...{C_RESET}")
+        mountpoint, err = mount_device(selected_disk["path"])
+        if not mountpoint:
+            print(f"{C_PINK}Failed to mount {selected_disk['name']}: {err}{C_RESET}")
+            return 1
+        print(f"{C_GREEN}✓ Mounted {selected_disk['name']} at {C_BLUE}{mountpoint}{C_RESET}")
+
+    # Set target file for the shell wrapper function to cd into
+    if args.target_file and mountpoint:
+        try:
+            with open(args.target_file, "w") as f:
+                f.write(mountpoint)
+        except Exception as e:
+            sys.stderr.write(f"Error recording target path: {e}\n")
+
+    return 0
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit(130)
