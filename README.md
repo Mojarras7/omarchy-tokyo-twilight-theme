@@ -8,11 +8,11 @@ A sleek, macOS-inspired dark theme for [Omarchy Linux](https://omarchy.org/) fea
 
 ## Highlights
 
-- 🎨 **Tokyo Twilight Palette**: Built on deep obsidian night (`#0c0d14`), vibrant Tokyo neon violet (`#a855f7`), electric cyber blue (`#3b82f6`), cyber pink (`#f43f8e`), and crisp white (`#f5f6ff`).
+- 🎨 **Tokyo Twilight Palette**: Built on cool macOS twilight slate (`#1a1c26`), vibrant Tokyo neon violet (`#a855f7`), electric cyber blue (`#3b82f6`), cyber pink (`#f43f8e`), and crisp white (`#eef0f8`).
 - 🪟 **Borderless & Clean**: Zero window borders and smooth 12px macOS-style rounded corners for a clean, distraction-free desktop.
 - ⚡ **Minimalist Terminal**: Refined ANSI color palette strictly tuned to purples, blues, whites, and pinks.
 - 🚀 **Zero-Border Menus**: Translucent, blurred quick-menu (<kbd>Super</kbd> + <kbd>Space</kbd>) and popups with 0 borders.
-- 🖼️ **4K / 5K / 6K Wallpaper Collection**: 6 ultra-high-resolution cinematic landscapes optimized for high-DPI displays.
+- 🖼️ **4K / 5K / 6K Wallpaper Collection**: 5 ultra-high-resolution cinematic landscapes optimized for high-DPI displays.
 
 ---
 
@@ -93,14 +93,14 @@ hyprctl reload
 
 | Swatch | Color Name | Hex Code | Purpose |
 |:---:|:---|:---:|:---|
-| ⬛ | **Obsidian Base** | `#0c0d14` | Background / Terminal surface |
+| ⬛ | **Twilight Slate** | `#1a1c26` | Background / Terminal surface |
 | 🟪 | **Tokyo Purple** | `#a855f7` | Primary Accent / Menu focus / Active indicators |
 | 🟦 | **Cyber Blue** | `#3b82f6` | Secondary Accent / Highlights |
 | 🩵 | **Ice Blue** | `#38bdf8` | Terminal Cyan / Links |
 | 🌸 | **Neon Pink** | `#f43f8e` | Terminal Red / Alerts / Status |
 | 🌺 | **Pastel Pink** | `#f472b6` | Terminal Yellow / Warm accents |
 | 🪻 | **Lilac Lavender** | `#c084fc` | Terminal Green / Soft violet |
-| ⬜ | **Clean White** | `#f5f6ff` | Foreground Text |
+| ⬜ | **Clean White** | `#eef0f8` | Foreground Text |
 
 ---
 
@@ -113,7 +113,6 @@ hyprctl reload
 | `3-rainbow-bridge-5k.jpg` | 5120 × 2160 (5K) | Illuminated Rainbow Bridge and Tokyo Bay at dusk |
 | `4-tokyo-tower-stars-4k.jpg` | 3840 × 2160 (4K) | Tokyo Tower beneath a starry twilight sky and Milky Way |
 | `5-fuji-starry-lake-6k.jpg` | 6144 × 3456 (6K) | Mount Fuji starry night reflection over Lake Yamanaka |
-| `6-tokyo-cosmic-twilight-4k.jpg` | 3840 × 2160 (4K) | Tokyo cosmic nebula artwork with neon violet twilight hues |
 
 ---
 

@@ -1,21 +1,21 @@
-# Tokyo Twilight Shell Surfaces
+# Tokyo Twilight macOS Cool Blue-Gray Shell Surfaces (borderless)
 [bar]
-background       = "#0c0d14"
+background       = "#15161c"
 background-alpha = 0.0
-text             = "#f5f6ff"
+text             = "#eef0f8"
 active           = "#a855f7"
 scale-with-font  = true
 size-horizontal  = 28
 size-vertical    = 28
 
 [hyprland]
-active-border            = "#a855f7 #3b82f6 45deg"
+active-border            = "#00000000"
 active-border-foreground = "#a855f7"
 
 [controls]
-normal-color              = "#f5f6ff"
+normal-color              = "#eef0f8"
 normal-fill-alpha         = 0.06
-normal-border             = "#f5f6ff"
+normal-border             = "#eef0f8"
 normal-border-width       = 0
 normal-border-alpha       = 0.0
 
@@ -32,12 +32,12 @@ focus-border-width        = 0
 focus-border-alpha        = 0.0
 
 selected-color            = "#ffffff"
-selected-fill-alpha       = 0.22
+selected-fill-alpha       = 0.20
 selected-border           = "#a855f7"
 selected-border-width     = 0
 selected-border-alpha     = 0.0
 
-pressed-fill-alpha        = 0.25
+pressed-fill-alpha        = 0.24
 selection-fill-alpha      = 0.35
 
 [spacing]
@@ -48,37 +48,37 @@ scale-with-font = true
 base-size = 12
 
 [popups]
-background       = "#0c0d14"
-background-alpha = 0.90
-text             = "#f5f6ff"
+background       = "#1c1d24"
+background-alpha = 0.94
+text             = "#eef0f8"
 border           = "#a855f7"
 border-alpha     = 0.0
 border-width     = 0
 
 [tooltip]
-background       = "#0c0d14"
-background-alpha = 0.95
-text             = "#f5f6ff"
+background       = "#1c1d24"
+background-alpha = 0.96
+text             = "#eef0f8"
 border           = "#a855f7"
 border-alpha     = 0.0
 
 [notifications]
-background       = "#0c0d14"
-background-alpha = 0.92
-text             = "#f5f6ff"
+background       = "#1c1d24"
+background-alpha = 0.94
+text             = "#eef0f8"
 border           = "#a855f7"
 border-alpha     = 0.0
 border-width     = 0
 countdown        = "#a855f7"
 
 [launcher]
-background                = "#0c0d14"
-background-alpha          = 0.88
-text                      = "#f5f6ff"
+background                = "#1c1d24"
+background-alpha          = 0.93
+text                      = "#eef0f8"
 border                    = "#a855f7"
 border-alpha              = 0.0
 border-width              = 0
-scrim                     = "#050609"
+scrim                     = "#101116"
 scrim-alpha               = 0.50
 selected-background       = "#a855f7"
 selected-background-alpha = 0.22
@@ -88,13 +88,13 @@ selected-border-alpha     = 0.0
 selected-border-width     = 0
 
 [menu]
-background                = "#0c0d14"
-background-alpha          = 0.88
-text                      = "#f5f6ff"
+background                = "#1c1d24"
+background-alpha          = 0.93
+text                      = "#eef0f8"
 border                    = "#a855f7"
 border-alpha              = 0.0
 border-width              = 0
-scrim                     = "#050609"
+scrim                     = "#101116"
 scrim-alpha               = 0.50
 selected-background       = "#a855f7"
 selected-background-alpha = 0.22
@@ -104,34 +104,34 @@ selected-border-alpha     = 0.0
 selected-border-width     = 0
 
 [polkit]
-background       = "#0c0d14"
-background-alpha = 0.92
-text             = "#f5f6ff"
+background       = "#1c1d24"
+background-alpha = 0.94
+text             = "#eef0f8"
 text-error       = "#f43f5e"
 border           = "#a855f7"
 border-error     = "#f43f5e"
 border-alpha     = 0.0
 border-width     = 0
-scrim            = "#050609"
+scrim            = "#101116"
 scrim-alpha      = 0.5
 accent           = "#a855f7"
 
 [lock]
-background       = "#0c0d14"
-background-alpha = 0.85
-text             = "#f5f6ff"
-placeholder      = "#65678a"
+background       = "#1c1d24"
+background-alpha = 0.90
+text             = "#eef0f8"
+placeholder      = "#8b8da3"
 text-error       = "#f43f5e"
 border           = "#a855f7"
 border-active    = "#a855f7"
 border-error     = "#f43f5e"
-border-alpha     = 0.3
+border-alpha     = 0.0
 selection        = "#a855f7"
 selection-alpha  = 0.45
 
 [image-picker]
-text                    = "#f5f6ff"
+text                    = "#eef0f8"
 selected-border         = "#a855f7"
 selected-border-alpha   = 1.0
-unselected-border       = "#4c486e"
-unselected-border-alpha = 0.30
+unselected-border       = "#73758c"
+unselected-border-alpha = 0.25
