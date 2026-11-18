@@ -117,6 +117,53 @@ hyprctl reload
 
 ---
 
+## Custom Minimalist Icons
+
+Tokyo Twilight includes custom macOS-style minimalist vector icons to replace default application launcher icons:
+
+- **Terminal (`Foot`)**: Dark macOS squircle with a glowing neon purple/cyan `>_` command prompt (replaces the default footprint).
+- **Files (`Nautilus`)**: Dark macOS squircle folder with purple/blue gradients.
+- **Steam**: Crisp 256x256 high-resolution icon fix (eliminates high-DPI blurriness).
+- **Tailscale**: Clean vector indicator icon.
+
+To install these custom icons on any machine:
+
+```bash
+cd ~/.config/omarchy/themes/tokyo-twilight
+./install-icons.sh
+```
+
+Or run the one-liner installer directly:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Mojarras7/tokyo-twilight/main/install-icons.sh | bash
+```
+
+---
+
+## Top Bar & Plugins Setup
+
+To match the clean, floating top bar shown in the screenshots:
+
+### 1. Transparent Top Bar
+Ensure your bar background mode is set to `none` (transparent):
+
+```bash
+omarchy bar background none
+```
+
+### 2. Bar Plugins Used
+Tokyo Twilight works with both default and enhanced Omarchy bar setups. The showcase desktop uses these additional plugins:
+
+| Plugin | Purpose | Install Command |
+|:---|:---|:---|
+| **Omarchy Spotify** | Music controls & album art | `omarchy plugin add https://github.com/stappmus/Omarchy-Spotify.git` |
+| **OmaRGB** | Hardware RGB lighting sync | `omarchy plugin add https://github.com/ilkaydnc/omargb.git` |
+| **Tailscale** | VPN status indicator on bar | Built-in: `omarchy bar put omarchy.tailscale --after quickshell.spotify` |
+| **Superwhisper** | Dictation panel widget | `superwhisper.panel` |
+
+---
+
 ## Author
 
 Created by **Alejandro Mojarras** ([@Mojarras7](https://github.com/Mojarras7)).
