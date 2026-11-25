@@ -32,6 +32,11 @@ is_in_gaming_view() {
     'any(.[]; .focused == true and .specialWorkspace.name == $ws)' >/dev/null 2>&1
 }
 
+has_gaming_window() {
+  hyprctl clients -j 2>/dev/null | jq -e --arg ws "special:$SPECIAL_WS" \
+    'any(.[]; .workspace.name == $ws)' >/dev/null 2>&1
+}
+
 has_big_picture() {
   hyprctl clients -j 2>/dev/null | jq -e \
     'any(.[]; (.class == "steam") and ((.title // "") | test("Big Picture"; "i")))' >/dev/null 2>&1
@@ -104,10 +109,36 @@ start_watcher() {
 }
 
 show_gaming_view() {
+  # Hyprland ignores togglespecialworkspace when the special workspace is empty,
+  # so only hide the bar and switch once a window exists in special:gaming.
+  if ! has_gaming_window; then
+    return 1
+  fi
   omarchy toggle bar on >/dev/null 2>&1 || true
   if ! is_in_gaming_view; then
     hyprctl dispatch togglespecialworkspace "$SPECIAL_WS" >/dev/null 2>&1 || true
   fi
+}
+
+ensure_steam_and_show() {
+  if has_gaming_window; then
+    show_gaming_view
+    return 0
+  fi
+
+  omarchy osd -m "Opening Game Mode..." -i "input-gaming" >/dev/null 2>&1 || true
+  setsid -f steam steam://open/bigpicture >/dev/null 2>&1 || true
+
+  # Poll until Steam Big Picture lands in special:gaming (up to 20s)
+  for _ in $(seq 1 80); do
+    if has_gaming_window; then
+      show_gaming_view
+      return 0
+    fi
+    sleep 0.25
+  done
+
+  return 1
 }
 
 hide_gaming_view() {
@@ -153,12 +184,7 @@ enter_game_mode() {
   echo "$profile" >"$ACTIVE_FILE"
   echo "$profile" >"$LAST_PROFILE_FILE"
 
-  show_gaming_view
-
-  if ! has_big_picture && ! has_steam_game; then
-    setsid -f steam steam://open/bigpicture >/dev/null 2>&1 || true
-  fi
-
+  ensure_steam_and_show || true
   start_watcher
 
   if [[ "$profile" == "silent" ]]; then
@@ -211,11 +237,8 @@ smart_toggle() {
     hide_gaming_view
     omarchy osd -m "Desktop — Super+G to return" -i "input-gaming" >/dev/null 2>&1 || true
   else
-    show_gaming_view
-    if ! has_big_picture && ! has_steam_game; then
-      setsid -f steam steam://open/bigpicture >/dev/null 2>&1 || true
-      start_watcher
-    fi
+    ensure_steam_and_show || true
+    start_watcher
   fi
 }
 
@@ -255,7 +278,7 @@ show_menu() {
 
   case "$selected" in
     "Return to Game")
-      show_gaming_view
+      ensure_steam_and_show || true
       ;;
     "Switch to Desktop")
       hide_gaming_view
