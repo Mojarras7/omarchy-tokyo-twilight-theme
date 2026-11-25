@@ -31,13 +31,13 @@ A sleek, macOS-inspired dark theme for [Omarchy Linux](https://omarchy.org/) fea
 You can install and apply **Tokyo Twilight** directly with the Omarchy CLI:
 
 ```bash
-omarchy theme install https://github.com/mojarras7/tokyo-twilight.git
+omarchy theme install https://github.com/Mojarras7/omarchy-tokyo-twilight-theme.git
 ```
 
 Or if you prefer to clone it manually into your themes directory:
 
 ```bash
-git clone https://github.com/mojarras7/tokyo-twilight.git ~/.config/omarchy/themes/tokyo-twilight
+git clone https://github.com/Mojarras7/omarchy-tokyo-twilight-theme.git ~/.config/omarchy/themes/tokyo-twilight
 omarchy theme set tokyo-twilight
 ```
 
@@ -135,7 +135,7 @@ cd ~/.config/omarchy/themes/tokyo-twilight
 Or run the one-liner installer directly:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Mojarras7/tokyo-twilight/main/install-icons.sh | bash
+curl -sSL https://raw.githubusercontent.com/Mojarras7/omarchy-tokyo-twilight-theme/main/install-icons.sh | bash
 ```
 
 ---
@@ -182,7 +182,7 @@ cd ~/.config/omarchy/themes/tokyo-twilight
 Or install with the one-liner:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Mojarras7/tokyo-twilight/main/install-dsk.sh | bash
+curl -sSL https://raw.githubusercontent.com/Mojarras7/omarchy-tokyo-twilight-theme/main/install-dsk.sh | bash
 ```
 
 ### Usage
@@ -213,7 +213,7 @@ cd ~/.config/omarchy/themes/tokyo-twilight
 Or install with the one-liner:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Mojarras7/tokyo-twilight/main/install-game-mode.sh | bash
+curl -sSL https://raw.githubusercontent.com/Mojarras7/omarchy-tokyo-twilight-theme/main/install-game-mode.sh | bash
 ```
 
 ---
