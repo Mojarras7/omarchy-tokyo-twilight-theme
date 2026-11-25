@@ -193,6 +193,31 @@ curl -sSL https://raw.githubusercontent.com/Mojarras7/tokyo-twilight/main/instal
 
 ---
 
+## Immersive Game Mode
+
+Tokyo Twilight includes a console-style **Game Mode** powered by Hyprland's hidden `special:gaming` workspace — zero clutter in your numbered workspaces and instant switching between your game and desktop:
+
+- 🎮 **One-Key Console Switch (<kbd>Super</kbd> + <kbd>G</kbd>)**: Enters Game Mode directly (no menu friction), launches Steam Big Picture in fullscreen, and lets you jump back and forth between your game and your exact previous desktop workspace.
+- 🎛️ **Control Menu (<kbd>Super</kbd> + <kbd>Ctrl</kbd> + <kbd>G</kbd>)**: Switch between **Performance** and **Silent** profiles or cleanly exit Game Mode.
+- 🌌 **Distraction-Free Immersion**: Automatically hides the top bar, silences notifications (DND), pauses screensaver/idle lock (controller-friendly), and pauses Nightlight — restoring your exact prior desktop state when you exit.
+- 🔄 **Auto-Restore on Exit**: Closing Steam Big Picture from your controller automatically brings your desktop back to normal.
+
+### Installation
+On any new PC:
+
+```bash
+cd ~/.config/omarchy/themes/tokyo-twilight
+./install-game-mode.sh
+```
+
+Or install with the one-liner:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Mojarras7/tokyo-twilight/main/install-game-mode.sh | bash
+```
+
+---
+
 ## Author
 
 Created by **Alejandro Mojarras** ([@Mojarras7](https://github.com/Mojarras7)).
