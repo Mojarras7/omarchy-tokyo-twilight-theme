@@ -4,7 +4,7 @@ set -euo pipefail
 # Omarchy Immersive Game Mode (Tokyo Twilight)
 # Console-like gaming space on Hyprland's special:gaming workspace:
 #   - Super + G: Instant toggle (enter Game Mode, or switch smoothly between Game <-> Desktop)
-#   - Super + Ctrl + G (--menu): Control menu (Performance / Silent / Exit Game Mode)
+#   - Super + Ctrl + G (--menu): Compact control menu (Performance / Silent / Exit)
 #   - Auto-restores your desktop when you exit Steam Big Picture.
 
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omarchy/game-mode"
@@ -108,15 +108,24 @@ start_watcher() {
   echo $! >"$WATCHER_PID_FILE"
 }
 
+sync_bar() {
+  is_active || return 0
+  if is_in_gaming_view; then
+    bar_is_hidden || omarchy toggle bar on >/dev/null 2>&1 || true
+  else
+    if [[ "$(cat "$STATE_DIR/prev_bar_off" 2>/dev/null || echo false)" != "true" ]]; then
+      bar_is_hidden && omarchy toggle bar off >/dev/null 2>&1 || true
+    fi
+  fi
+}
+
 show_gaming_view() {
-  # Hyprland ignores togglespecialworkspace when the special workspace is empty,
-  # so only hide the bar and switch once a window exists in special:gaming.
   if ! has_gaming_window; then
     return 1
   fi
   omarchy toggle bar on >/dev/null 2>&1 || true
   if ! is_in_gaming_view; then
-    hyprctl dispatch togglespecialworkspace "$SPECIAL_WS" >/dev/null 2>&1 || true
+    hyprctl dispatch "hl.dsp.workspace.toggle_special(\"$SPECIAL_WS\")" >/dev/null 2>&1 || true
   fi
 }
 
@@ -126,7 +135,6 @@ ensure_steam_and_show() {
     return 0
   fi
 
-  omarchy osd -m "Opening Game Mode..." -i "input-gaming" >/dev/null 2>&1 || true
   setsid -f steam steam://open/bigpicture >/dev/null 2>&1 || true
 
   # Poll until Steam Big Picture lands in special:gaming (up to 20s)
@@ -143,7 +151,7 @@ ensure_steam_and_show() {
 
 hide_gaming_view() {
   if is_in_gaming_view; then
-    hyprctl dispatch togglespecialworkspace "$SPECIAL_WS" >/dev/null 2>&1 || true
+    hyprctl dispatch "hl.dsp.workspace.toggle_special(\"$SPECIAL_WS\")" >/dev/null 2>&1 || true
   fi
   if [[ "$(cat "$STATE_DIR/prev_bar_off" 2>/dev/null || echo false)" != "true" ]]; then
     omarchy toggle bar off >/dev/null 2>&1 || true
@@ -188,9 +196,9 @@ enter_game_mode() {
   start_watcher
 
   if [[ "$profile" == "silent" ]]; then
-    omarchy osd -m "Game Mode: Silent" -i "audio-volume-muted" >/dev/null 2>&1 || true
+    omarchy osd -m "Gaming · Silent" -i "󰌪" >/dev/null 2>&1 || true
   else
-    omarchy osd -m "Game Mode" -i "input-gaming" >/dev/null 2>&1 || true
+    omarchy osd -m "Gaming" -i "󰊗" >/dev/null 2>&1 || true
   fi
 }
 
@@ -200,7 +208,7 @@ exit_game_mode() {
   stop_watcher
 
   if is_in_gaming_view; then
-    hyprctl dispatch togglespecialworkspace "$SPECIAL_WS" >/dev/null 2>&1 || true
+    hyprctl dispatch "hl.dsp.workspace.toggle_special(\"$SPECIAL_WS\")" >/dev/null 2>&1 || true
   fi
 
   if [[ "$close_steam" == "true" ]] && has_big_picture; then
@@ -227,7 +235,7 @@ exit_game_mode() {
 
   rm -f "$ACTIVE_FILE" "$STATE_DIR/prev_bar_off" "$STATE_DIR/prev_stay_awake" "$STATE_DIR/prev_nightlight"
 
-  omarchy osd -m "Desktop Restored" -i "dialog-information" >/dev/null 2>&1 || true
+  omarchy osd -m "Desktop" -i "󰍹" >/dev/null 2>&1 || true
 }
 
 smart_toggle() {
@@ -235,38 +243,36 @@ smart_toggle() {
     enter_game_mode "$(last_profile)"
   elif is_in_gaming_view; then
     hide_gaming_view
-    omarchy osd -m "Desktop — Super+G to return" -i "input-gaming" >/dev/null 2>&1 || true
+    omarchy osd -m "Desktop" -i "󰍹" >/dev/null 2>&1 || true
   else
     ensure_steam_and_show || true
     start_watcher
+    if [[ "$(current_profile)" == "silent" ]]; then
+      omarchy osd -m "Gaming · Silent" -i "󰌪" >/dev/null 2>&1 || true
+    else
+      omarchy osd -m "Gaming" -i "󰊗" >/dev/null 2>&1 || true
+    fi
   fi
 }
 
 show_menu() {
   local OPTS=()
   if is_active; then
-    local prof
-    prof=$(current_profile)
-
     if is_in_gaming_view; then
-      OPTS+=($'󰍹\tSwitch to Desktop\tReturn to your workspace while keeping Game Mode running')
+      OPTS+=($'󰍹\tDesktop\tBack to workspace')
     else
-      OPTS+=($'󰊗\tReturn to Game\tJump straight back into your gaming space')
+      OPTS+=($'󰊗\tGaming\tReturn to game')
     fi
 
-    if [[ "$prof" == "performance" ]]; then
-      OPTS+=($'󰓅\tPerformance Mode (Active)\tFull power, immersive console space')
-      OPTS+=($'󰌪\tSilent Mode\tSwitch to cooler, quieter fans')
-    else
-      OPTS+=($'󰓅\tPerformance Mode\tSwitch to full power profile')
-      OPTS+=($'󰌪\tSilent Mode (Active)\tCooler, quieter fans')
-    fi
-
-    OPTS+=($'󰈆\tExit Game Mode\tClose Big Picture and restore desktop')
+    OPTS+=(
+      $'󰓅\tPerformance\tFull power'
+      $'󰌪\tSilent\tQuiet fans'
+      $'󰈆\tExit\tClose & restore desktop'
+    )
   else
     OPTS=(
-      $'󰓅\tPerformance Mode\tEnter immersive Game Mode with full power'
-      $'󰌪\tSilent Mode\tEnter immersive Game Mode with quiet fans'
+      $'󰓅\tPerformance\tFull power'
+      $'󰌪\tSilent\tQuiet fans'
     )
   fi
 
@@ -277,19 +283,19 @@ show_menu() {
   selected="${choice%%$'\t'*}"
 
   case "$selected" in
-    "Return to Game")
+    "Gaming")
       ensure_steam_and_show || true
       ;;
-    "Switch to Desktop")
+    "Desktop")
       hide_gaming_view
       ;;
-    "Performance Mode"|"Performance Mode (Active)")
+    "Performance")
       enter_game_mode "performance"
       ;;
-    "Silent Mode"|"Silent Mode (Active)")
+    "Silent")
       enter_game_mode "silent"
       ;;
-    "Exit Game Mode")
+    "Exit")
       exit_game_mode "true"
       ;;
   esac
@@ -298,6 +304,9 @@ show_menu() {
 case "${1:-}" in
   --menu|-m)
     show_menu
+    ;;
+  --sync-bar)
+    sync_bar
     ;;
   --performance)
     enter_game_mode "performance"

@@ -22,6 +22,18 @@ if [[ -f "$HYPRLAND_LUA" ]]; then
 -- Dedicated gaming special workspace rules:
 o.window({ class = "steam", title = "Steam Big Picture Mode" }, { workspace = "special:gaming", fullscreen = true, idle_inhibit = "always" })
 o.window({ class = "^steam_app_.*$" }, { workspace = "special:gaming", idle_inhibit = "always" })
+
+-- Keep the top bar in sync if you leave special:gaming via any workspace key (e.g. Super+1)
+local gaming_active_file = (os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")) .. "/omarchy/game-mode/active"
+local function sync_gaming_bar()
+  local f = io.open(gaming_active_file, "r")
+  if f then
+    f:close()
+    hl.exec_cmd("omarchy-game-mode --sync-bar")
+  end
+end
+hl.on("workspace.special_active", sync_gaming_bar)
+hl.on("workspace.active", sync_gaming_bar)
 EOF
     echo "✓ Added special:gaming window rules to ~/.config/hypr/hyprland.lua"
   else
